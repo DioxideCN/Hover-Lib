@@ -1,0 +1,11 @@
+name: HoverLib
+version: '${project.version}'
+main: cn.dioxide.HoverLib
+api-version: 1.19
+prefix: HoverLib
+authors: [ Dioxide_CN ]
+description: Let you create a personal library.
+commands:
+  hlib:
+    description: "wrong usage of HoverLib"
+    usage: "please input /hlib help to get plugin help"
