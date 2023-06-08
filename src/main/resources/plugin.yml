@@ -1,10 +1,11 @@
 name: HoverLib
 version: '${project.version}'
 main: cn.dioxide.HoverLib
-api-version: 1.19
+api-version: '1.20'
 prefix: HoverLib
 authors: [ Dioxide_CN ]
 description: Let you create a personal library.
+depend: [NBTAPI]
 commands:
   hlib:
     description: "wrong usage of HoverLib"

@@ -1,11 +1,10 @@
 package cn.dioxide;
 
 import cn.dioxide.command.MainCommand;
-import cn.dioxide.service.ClickBlockEvent;
-import cn.dioxide.service.ClickItemFrameEvent;
+import cn.dioxide.extension.CustomRecipe;
+import cn.dioxide.service.*;
 import cn.dioxide.util.ColorUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -20,8 +19,26 @@ public final class HoverLib extends JavaPlugin {
 
         Objects.requireNonNull(Bukkit.getPluginCommand("hlib")).setExecutor(new MainCommand());
         Objects.requireNonNull(Bukkit.getPluginCommand("hlib")).setTabCompleter(new MainCommand());
-        Bukkit.getPluginManager().registerEvents(new ClickBlockEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new ClickItemFrameEvent(), this);
+
+        // 事件
+        ClickBlockEvent clickBlockEvent = new ClickBlockEvent();
+        ClickItemFrameEvent clickItemFrameEvent = new ClickItemFrameEvent();
+        SmeltingEvent smeltingEvent = new SmeltingEvent();
+        BreakEvent breakEvent = new BreakEvent();
+        EquipEvent equipEvent = new EquipEvent();
+
+        // 注册事件
+        Bukkit.getPluginManager().registerEvents(clickBlockEvent, this);
+        Bukkit.getPluginManager().registerEvents(clickItemFrameEvent, this);
+        Bukkit.getPluginManager().registerEvents(smeltingEvent, this);
+        Bukkit.getPluginManager().registerEvents(breakEvent, this);
+        Bukkit.getPluginManager().registerEvents(equipEvent, this);
+
+        // 定时任务
+        getServer().getScheduler().runTaskTimer(this, LoopTaskEvent::spreadWaterBreath, 0L, 20L);
+
+        // 合成配方
+        new CustomRecipe().init(this);
     }
 
     @Override

@@ -1,15 +1,21 @@
 package cn.dioxide.service;
 
 import cn.dioxide.util.ColorUtil;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -17,6 +23,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import java.util.Objects;
 
 public class ClickBlockEvent implements Listener {
+
     @EventHandler
     public synchronized void playerPutBook2Wall(PlayerInteractEvent e) {
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
@@ -90,4 +97,28 @@ public class ClickBlockEvent implements Listener {
         itemFrame.setItem(awaitBook);
         itemFrame.setFacingDirection(itemFrameFacing);
     }
+
+    @EventHandler
+    public void onPlayerInteract(SignChangeEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+
+        // 检查玩家手持的是否是纸
+        if(event.getBlock().getState() instanceof Sign sign) {
+            if (itemInHand.getType() == Material.PAPER) {
+                // 取消编辑事件
+                event.setCancelled(true);
+                SignSide side = (sign).getSide(event.getSide());
+                // 移除告示牌的标签
+                side.setGlowingText(false);
+                side.setColor(DyeColor.BLACK);
+                // 从玩家的物品栏中移除一张纸
+                itemInHand.setAmount(itemInHand.getAmount() - 1);
+                sign.update();
+                // 播放声音
+                player.playSound(player, Sound.BLOCK_CALCITE_HIT, 1.0F, 1.0F);
+            }
+        }
+    }
+
 }

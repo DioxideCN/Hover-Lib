@@ -14,8 +14,9 @@ public class ClickItemFrameEvent implements Listener {
             return;
 
         ItemFrame itemFrame = (ItemFrame) e.getRightClicked();
-        if (itemFrame.getItem().getType() != Material.WRITTEN_BOOK)
+        if (itemFrame.getItem().getType() != Material.WRITTEN_BOOK) {
             return;
+        }
 
         e.getPlayer().openBook(itemFrame.getItem());
     }
