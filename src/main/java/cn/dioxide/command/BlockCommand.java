@@ -29,7 +29,7 @@ public class BlockCommand {
             return true;
         }
         // display item [x/help [1]] [y [2]] [z [3]] [r1 [4]] [r2 [5]] [r3 [6]] [s [7]] [t [8]] [t/f [9]]
-        double x, y, z, scale; // x,y,z可以为负
+        double x, y, z, sx, sy, sz; // x,y,z可以为负
         int rx, ry, rz; // 可为负数
         try {
             // 尝试将索引 1，2，3 上的字符串解析为 double 类型
@@ -62,7 +62,9 @@ public class BlockCommand {
             } else {
                 z = Double.parseDouble(args[3]);
             }
-            scale = Double.parseDouble(args[7]);
+            sx = Double.parseDouble(args[7]);
+            sy = Double.parseDouble(args[8]);
+            sz = Double.parseDouble(args[9]);
 
             // 尝试将索引 4，5 上的字符串解析为 int 类型
             rx = Integer.parseInt(args[4]);
@@ -77,8 +79,25 @@ public class BlockCommand {
             p.sendMessage(ColorUtil.formatNotice("&c放置的半径不能超过"+ Config.get().display.block.getPlaceRadius()+"格"));
             return true;
         }
-        if (scale < 0.5 || scale > 5) {
-            p.sendMessage(ColorUtil.formatNotice("&c缩放的比例不能小于0.5也不能大于5"));
+        if (sx < Config.get().display.block.getScale()[0][0] || sx > Config.get().display.block.getScale()[0][1]) {
+            p.sendMessage(ColorUtil.formatNotice("&cX轴缩放的比例不能小于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[0][0]) +
+                    " &c也不能大于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[0][1])));
+            return true;
+        }
+        if (sy < Config.get().display.block.getScale()[1][0] || sy > Config.get().display.block.getScale()[1][1]) {
+            p.sendMessage(ColorUtil.formatNotice("&cY轴缩放的比例不能小于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[1][0]) +
+                    " &c也不能大于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[1][1])));
+            return true;
+        }
+        if (sz < Config.get().display.block.getScale()[2][0] || sz > Config.get().display.block.getScale()[2][1]) {
+            p.sendMessage(ColorUtil.formatNotice("&cZ轴缩放的比例不能小于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[2][0]) +
+                    " &c也不能大于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[2][1])));
             return true;
         }
         ItemStack itemInHand = p.getInventory().getItemInMainHand(); // 获取玩家主手中的物品
@@ -87,7 +106,7 @@ public class BlockCommand {
             return true;
         }
         if (itemInHand.getType().isBlock()) {
-            Matrix4f matrix = MatrixUtil.getMatrix(rx, ry, rz, scale); // 生成仿射变换矩阵
+            Matrix4f matrix = MatrixUtil.getMatrix(rx, ry, rz, sx, sy, sz); // 生成仿射变换矩阵
             Material material = itemInHand.getType(); // 获取物品的类型
             BlockData blockData = material.createBlockData(); // 创建BlockData实例
             World world = p.getWorld(); // 获取玩家所在维度
@@ -150,7 +169,7 @@ public class BlockCommand {
 
     protected boolean pluginHelper(Player p) {
         p.sendMessage(ColorUtil.formatNotice("&fBlock &7创建方块展示实体指南"));
-        p.sendMessage(ColorUtil.formatCommand("display block <x y z> <rx ry rz> <s> [<bool>] &8- &7生成方块展示实体"));
+        p.sendMessage(ColorUtil.formatCommand("display block <x y z> <rx ry rz> <sx sy sz> [<bool>] &8- &7生成方块展示实体"));
         p.sendMessage(ColorUtil.formatPermission("hover.display.block.place"));
         p.sendMessage(ColorUtil.formatCommand("display block recycle &8- &7回收距离自己" +
                 Config.get().display.block.getRecycleRadius() +
@@ -188,7 +207,7 @@ public class BlockCommand {
                     blockHelper.add("~");
                     blockHelper.add(z);
                 }
-                case 9 -> {
+                case 11 -> {
                     blockHelper.add("true");
                     blockHelper.add("false");
                 }

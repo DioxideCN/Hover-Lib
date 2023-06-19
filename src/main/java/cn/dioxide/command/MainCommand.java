@@ -77,28 +77,28 @@ public class MainCommand implements TabExecutor {
                 }
             }
         }
-        if (args.length >= 8 && args.length <= 10) {
-            // display item <x y z> <rx ry rz> <s> <type> <true/false>
+        if (args.length >= 10 && args.length <= 12) {
+            // display item <x y z> <rx ry rz> <sx sy sz> <type> <true/false>
             if ("item".equals(args[0])) {
                 return itemCommand.placeItemDisplay(
                         player,
                         args,
-                        args.length == 9 ? args[8] : "fixed",
-                        args.length == 10 && Boolean.parseBoolean(args[9]));
+                        args.length == 11 ? args[10] : "fixed",
+                        args.length == 12 && Boolean.parseBoolean(args[11]));
             }
             // display block <x y z> <rx ry rz> <s> <type> <true/false>
-            if ("block".equals(args[0]) && args.length <= 9) {
+            if ("block".equals(args[0]) && args.length <= 11) {
                 return blockCommand.placeItemDisplay(
                         player,
                         args,
-                        args.length != 9 && Boolean.parseBoolean(args[8]));
+                        args.length == 11 && Boolean.parseBoolean(args[10]));
             }
         }
         return false;
     }
 
     private boolean pluginHelper(Player p) {
-        p.sendMessage(ColorUtil.formatNotice("&7插件指南"));
+        p.sendMessage(ColorUtil.formatNotice("&7插件指南 &f版本: &71.1.1"));
         p.sendMessage(ColorUtil.formatCommand("display book help &8- &7图书创建指南"));
         p.sendMessage(ColorUtil.formatCommand("display item help &8- &7物品展示指南"));
         p.sendMessage(ColorUtil.formatCommand("display block help &8- &7方块展示指南"));

@@ -10,11 +10,11 @@ import org.joml.Matrix4f;
 public class MatrixUtil {
 
     // 计算仿射矩阵
-    public static Matrix4f getMatrix(double rx, double ry, double rz, double scale) {
+    public static Matrix4f getMatrix(double rx, double ry, double rz, double sx, double sy, double sz) {
         Matrix4f affineMatrix = new Matrix4f();
-        // Scale
-        affineMatrix.scale((float) scale);
-        // Rotate
+        // 3D Scale
+        affineMatrix.scale((float) sx, (float) sy, (float) sz);
+        // 3D Rotate
         affineMatrix.rotateX((float) Math.toRadians(rx));
         affineMatrix.rotateY((float) Math.toRadians(ry));
         affineMatrix.rotateZ((float) Math.toRadians(rz));

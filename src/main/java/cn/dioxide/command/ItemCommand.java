@@ -32,7 +32,7 @@ public class ItemCommand {
             return true;
         }
         // display item [x/help [1]] [y [2]] [z [3]] [r1 [4]] [r2 [5]] [r3 [6]] [s [7]] [t [8]] [t/f [9]]
-        double x, y, z, scale; // x,y,z可以为负
+        double x, y, z, sx, sy, sz; // x,y,z可以为负
         int rx, ry, rz; // 可为负数
         try {
             // 尝试将索引 1，2，3 上的字符串解析为 double 类型
@@ -65,7 +65,9 @@ public class ItemCommand {
             } else {
                 z = Double.parseDouble(args[3]);
             }
-            scale = Double.parseDouble(args[7]);
+            sx = Double.parseDouble(args[7]);
+            sy = Double.parseDouble(args[8]);
+            sz = Double.parseDouble(args[9]);
 
             // 尝试将索引 4，5 上的字符串解析为 int 类型
             rx = Integer.parseInt(args[4]);
@@ -77,11 +79,28 @@ public class ItemCommand {
         }
         // 限制范围
         if (CalcUtil.isOutOfRange(p, x, y, z, Config.get().display.item.getPlaceRadius())) {
-            p.sendMessage(ColorUtil.formatNotice("&c放置的半径不能超过"+Config.get().display.item.getPlaceRadius()+"格"));
+            p.sendMessage(ColorUtil.formatNotice("&c放置的半径不能超过 &f"+Config.get().display.item.getPlaceRadius()+" &c格"));
             return true;
         }
-        if (scale < 0.5 || scale > 1) {
-            p.sendMessage(ColorUtil.formatNotice("&c缩放的比例不能小于0.5也不能大于1"));
+        if (sx < Config.get().display.item.getScale()[0][0] || sx > Config.get().display.item.getScale()[0][1]) {
+            p.sendMessage(ColorUtil.formatNotice("&cX轴缩放的比例不能小于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[0][0]) +
+                    " &c也不能大于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[0][1])));
+            return true;
+        }
+        if (sy < Config.get().display.item.getScale()[1][0] || sy > Config.get().display.item.getScale()[1][1]) {
+            p.sendMessage(ColorUtil.formatNotice("&cY轴缩放的比例不能小于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[1][0]) +
+                    " &c也不能大于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[1][1])));
+            return true;
+        }
+        if (sz < Config.get().display.item.getScale()[2][0] || sz > Config.get().display.item.getScale()[2][1]) {
+            p.sendMessage(ColorUtil.formatNotice("&cZ轴缩放的比例不能小于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[2][0]) +
+                    " &c也不能大于 &f" +
+                    String.format("%.1f", Config.get().display.item.getScale()[2][1])));
             return true;
         }
         ItemDisplay.ItemDisplayTransform transformType = CalcUtil.getTransformType(type);
@@ -95,7 +114,7 @@ public class ItemCommand {
             return true;
         }
         // 生成仿射变换矩阵
-        Matrix4f matrix = MatrixUtil.getMatrix(rx, ry, rz, scale);
+        Matrix4f matrix = MatrixUtil.getMatrix(rx, ry, rz, sx, sy, sz);
         World world = p.getWorld();
         Location location = new Location(world, x, y, z);
         ItemDisplay display = (ItemDisplay) world.spawnEntity(location, EntityType.ITEM_DISPLAY);
@@ -156,7 +175,7 @@ public class ItemCommand {
 
     protected boolean pluginHelper(Player p) {
         p.sendMessage(ColorUtil.formatNotice("&fItem &7创建物品展示实体指南"));
-        p.sendMessage(ColorUtil.formatCommand("display item <x y z> <rx ry rz> <s> [<type>] [<bool>] &8- &7生成物品展示实体"));
+        p.sendMessage(ColorUtil.formatCommand("display item <x y z> <rx ry rz> <sx sy sz> [<type>] [<bool>] &8- &7生成物品展示实体"));
         p.sendMessage(ColorUtil.formatPermission("hover.display.item.place"));
         p.sendMessage(ColorUtil.formatCommand("display item recycle &8- &7回收距离自己" +
                 Config.get().display.item.getRecycleRadius() +
@@ -194,7 +213,7 @@ public class ItemCommand {
                     itemHelper.add("~");
                     itemHelper.add(z);
                 }
-                case 9 -> itemHelper.addAll( // [t]
+                case 11 -> itemHelper.addAll( // [t]
                         Arrays.asList(
                                 "none",
                                 "thirdperson_lefthand",
@@ -205,7 +224,7 @@ public class ItemCommand {
                                 "gui",
                                 "ground",
                                 "fixed"));
-                case 10 -> {
+                case 12 -> {
                     itemHelper.add("true");
                     itemHelper.add("false");
                 }

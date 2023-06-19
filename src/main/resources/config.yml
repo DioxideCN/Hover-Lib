@@ -23,6 +23,18 @@ display:
     recycle-radius: 2
     # 创建物品展示实体是否消耗手持的物品
     consume: true
+    # 物品展示实体在xyz轴方向上能缩放的范围
+    # 缩放范围为闭区间，即两个边缘都能取到
+    scale:
+      x:
+        min: 0.5
+        max: 2.0
+      y:
+        min: 0.5
+        max: 2.0
+      z:
+        min: 0.5
+        max: 2.0
   block:
     # 放置方块展示实体时放置的坐标不能和玩家超过多少距离
     # 小于等于0则不启用这项功能
@@ -32,6 +44,18 @@ display:
     recycle-radius: 2
     # 创建方块展示实体是否消耗手持的方块类型物品
     consume: true
+    # 方块展示实体在xyz轴方向上能缩放的范围
+    # 缩放范围为闭区间，即两个边缘都能取到
+    scale:
+      x:
+        min: 0.5
+        max: 5.0
+      y:
+        min: 0.5
+        max: 5.0
+      z:
+        min: 0.5
+        max: 5.0
   book:
     # 创建成书展示框是否消耗手持的成书
     consume: true

@@ -72,10 +72,24 @@ public class Config {
         this.display.item.placeRadius = configs[0].getInt("display.item.place-radius", 3);
         this.display.item.recycleRadius = configs[0].getInt("display.item.recycle-radius", 2);
         this.display.item.consume = configs[0].getBoolean("display.item.consume", true);
+        this.display.item.scale = new double[3][2];
+        this.display.item.scale[0][0] = configs[0].getDouble("display.item.scale.x.min");
+        this.display.item.scale[0][1] = configs[0].getDouble("display.item.scale.x.max");
+        this.display.item.scale[1][0] = configs[0].getDouble("display.item.scale.y.min");
+        this.display.item.scale[1][1] = configs[0].getDouble("display.item.scale.y.max");
+        this.display.item.scale[2][0] = configs[0].getDouble("display.item.scale.z.min");
+        this.display.item.scale[2][1] = configs[0].getDouble("display.item.scale.z.max");
 
         this.display.block.placeRadius = configs[0].getInt("display.block.place-radius", 3);
         this.display.block.recycleRadius = configs[0].getInt("display.block.recycle-radius", 2);
         this.display.block.consume = configs[0].getBoolean("display.block.consume", true);
+        this.display.block.scale = new double[3][2];
+        this.display.block.scale[0][0] = configs[0].getDouble("display.block.scale.x.min");
+        this.display.block.scale[0][1] = configs[0].getDouble("display.block.scale.x.max");
+        this.display.block.scale[1][0] = configs[0].getDouble("display.block.scale.y.min");
+        this.display.block.scale[1][1] = configs[0].getDouble("display.block.scale.y.max");
+        this.display.block.scale[2][0] = configs[0].getDouble("display.block.scale.z.min");
+        this.display.block.scale[2][1] = configs[0].getDouble("display.block.scale.z.max");
 
         this.display.book.consume = configs[0].getBoolean("display.book.consume", true);
     }
@@ -99,6 +113,7 @@ public class Config {
             private int placeRadius;
             private int recycleRadius;
             private boolean consume;
+            private double[][] scale;
         }
 
         @Getter
@@ -106,6 +121,7 @@ public class Config {
             private int placeRadius;
             private int recycleRadius;
             private boolean consume;
+            private double[][] scale;
         }
 
         @Getter
