@@ -1,13 +1,22 @@
 package cn.dioxide.command;
 
+import cn.dioxide.extension.Config;
+import cn.dioxide.util.CalcUtil;
 import cn.dioxide.util.ColorUtil;
+import cn.dioxide.util.MatrixUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,7 +26,7 @@ import java.util.List;
  */
 public class ItemCommand {
 
-    protected boolean placeItemDisplay(Player p, String[] args, boolean canRecycle) {
+    protected boolean placeItemDisplay(Player p, String[] args, String type, boolean canRecycle) {
         if (!p.hasPermission("hover.display.item.place")) {
             p.sendMessage(ColorUtil.formatNotice("&c你没有放置物品展示实体的权限"));
             return true;
@@ -63,19 +72,19 @@ public class ItemCommand {
             ry = Integer.parseInt(args[5]);
             rz = Integer.parseInt(args[6]);
         } catch (NumberFormatException e) {
-            p.sendMessage(ColorUtil.formatNotice("&c参数类型错误请确保你的小数和整数部分是正确的"));
+            p.sendMessage(ColorUtil.formatNotice("&c参数类型错误，请确保你的小数和整数部分是正确的"));
             return true;
         }
         // 限制范围
-        if (!isWithinRange(p, x, y, z)) {
-            p.sendMessage(ColorUtil.formatNotice("&c放置的半径不能超过3格"));
+        if (CalcUtil.isOutOfRange(p, x, y, z, Config.get().display.item.getPlaceRadius())) {
+            p.sendMessage(ColorUtil.formatNotice("&c放置的半径不能超过"+Config.get().display.item.getPlaceRadius()+"格"));
             return true;
         }
         if (scale < 0.5 || scale > 1) {
             p.sendMessage(ColorUtil.formatNotice("&c缩放的比例不能小于0.5也不能大于1"));
             return true;
         }
-        ItemDisplay.ItemDisplayTransform transformType = getTransformType(args[8]);
+        ItemDisplay.ItemDisplayTransform transformType = CalcUtil.getTransformType(type);
         if (transformType == null) {
             p.sendMessage(ColorUtil.formatNotice("&c指定的物品展示实体的模式不存在"));
             return true;
@@ -86,7 +95,7 @@ public class ItemCommand {
             return true;
         }
         // 生成仿射变换矩阵
-        Matrix4f matrix = getMatrix(rx, ry, rz, scale);
+        Matrix4f matrix = MatrixUtil.getMatrix(rx, ry, rz, scale);
         World world = p.getWorld();
         Location location = new Location(world, x, y, z);
         ItemDisplay display = (ItemDisplay) world.spawnEntity(location, EntityType.ITEM_DISPLAY);
@@ -97,8 +106,8 @@ public class ItemCommand {
         display.setItemStack(mainHandItem_temp);
         // owner.true.Dioxide_CN
         display.addScoreboardTag("owner." + (p.isOp() || canRecycle) + "." + p.getName());
-        p.sendMessage(ColorUtil.formatNotice("&a已放置展示物品实体"));
-        if (!p.isOp()) {
+        p.sendMessage(ColorUtil.formatNotice("&a已放置物品展示实体"));
+        if (!p.isOp() || !Config.get().display.item.isConsume()) {
             // 非OP需要扣除
             mainHandItem.setAmount(mainHandItem.getAmount() - 1);
         }
@@ -147,42 +156,63 @@ public class ItemCommand {
 
     protected boolean pluginHelper(Player p) {
         p.sendMessage(ColorUtil.formatNotice("&fItem &7创建物品展示实体指南"));
-        p.sendMessage(ColorUtil.formatCommand("display item <x y z> <rx ry rz> <s> <type> [<bool>] &8- &7生成物品展示实体"));
+        p.sendMessage(ColorUtil.formatCommand("display item <x y z> <rx ry rz> <s> [<type>] [<bool>] &8- &7生成物品展示实体"));
         p.sendMessage(ColorUtil.formatPermission("hover.display.item.place"));
-        p.sendMessage(ColorUtil.formatCommand("display item recycle &8- &7回收距离自己2格范围内的物品展示实体"));
+        p.sendMessage(ColorUtil.formatCommand("display item recycle &8- &7回收距离自己" +
+                Config.get().display.item.getRecycleRadius() +
+                "格范围内的物品展示实体"));
         p.sendMessage(ColorUtil.formatPermission("hover.display.item.recycle"));
         return true;
     }
 
-    // 计算仿射矩阵
-    private static Matrix4f getMatrix(double rx, double ry, double rz, double scale) {
-        Matrix4f affineMatrix = new Matrix4f();
-        // Scale
-        affineMatrix.scale((float) scale);
-        // Rotate
-        affineMatrix.rotateX((float) Math.toRadians(rx));
-        affineMatrix.rotateY((float) Math.toRadians(ry));
-        affineMatrix.rotateZ((float) Math.toRadians(rz));
-
-        return affineMatrix;
-    }
-
-    public static ItemDisplay.ItemDisplayTransform getTransformType(String s) {
-        try {
-            return ItemDisplay.ItemDisplayTransform.valueOf(s.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            // 如果输入的字符串没有与任何枚举常量匹配，valueOf() 方法会抛出一个 IllegalArgumentException。
-            return null;
+    public static ArrayList<String> tab(@NotNull String[] args, Player player) {
+        ArrayList<String> itemHelper = new ArrayList<>();
+        // display item [x/help/recycle] [y] [z] [r1] [r2] [r3] [scale] [type] [bool]
+        String x = String.format("%.2f", player.getLocation().getX());
+        String y = String.format("%.2f", player.getLocation().getY());
+        String z = String.format("%.2f", player.getLocation().getZ());
+        // [x/help]
+        if (args.length == 2) {
+            itemHelper.add("help");
+            itemHelper.add("recycle");
+            itemHelper.add("~");
+            itemHelper.add("~ ~");
+            itemHelper.add("~ ~ ~");
+            itemHelper.add(x);
+            itemHelper.add(x + " " + y);
+            itemHelper.add(x + " " + y + " " + z);
         }
-    }
-
-    protected static boolean isWithinRange(Player p, double x, double y, double z) {
-        Location playerLocation = p.getLocation();
-        double distance = Math.sqrt(Math.pow(x - playerLocation.getX(), 2) +
-                Math.pow(y - playerLocation.getY(), 2) +
-                Math.pow(z - playerLocation.getZ(), 2));
-
-        return distance <= 3;
+        if (!"help".equals(args[1])) {
+            switch (args.length) {
+                case 3 -> { // [y]
+                    itemHelper.add("~");
+                    itemHelper.add("~ ~");
+                    itemHelper.add(y);
+                    itemHelper.add(y + " " + z);
+                }
+                case 4 -> { // [z]
+                    itemHelper.add("~");
+                    itemHelper.add(z);
+                }
+                case 9 -> itemHelper.addAll( // [t]
+                        Arrays.asList(
+                                "none",
+                                "thirdperson_lefthand",
+                                "thirdperson_righthand",
+                                "firstperson_lefthand",
+                                "firstperson_righthand",
+                                "head",
+                                "gui",
+                                "ground",
+                                "fixed"));
+                case 10 -> {
+                    itemHelper.add("true");
+                    itemHelper.add("false");
+                }
+                default -> {}
+            }
+        }
+        return itemHelper;
     }
 
 }

@@ -1,5 +1,6 @@
 package cn.dioxide.service;
 
+import cn.dioxide.extension.Config;
 import cn.dioxide.util.ColorUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -98,7 +99,7 @@ public class BookPlaceEvent implements Listener {
         itemFrame.setFacingDirection(itemFrameFacing);
         // 添加 owner.player_name 的tag方便后续owner移除
         itemFrame.addScoreboardTag("owner." + e.getPlayer().getName());
-        if (!e.getPlayer().isOp()) {
+        if (!e.getPlayer().isOp() || !Config.get().display.book.isConsume()) {
             // 非OP需要扣除
             awaitBook.setAmount(awaitBook.getAmount() - 1);
         }
