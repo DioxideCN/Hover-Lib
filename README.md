@@ -7,10 +7,10 @@ HoverLib指令分四大模块：基本指南、相框书架指南、物品展示
 ### 基本指南
 除了在基本指南中不会出现特殊的符号，其它指南中的中括号表示可选输入、尖括号为参数内容。
 
-| 指令            | 权限          | 功能   |
-|---------------|-------------|------|
-| /display      | display.use | 基本指南 |
-| /display help | display.use | 基本指南 |
+| 指令            | 权限                | 功能   |
+|---------------|-------------------|------|
+| /display      | hover.display.use | 基本指南 |
+| /display help | hover.display.use | 基本指南 |
 
 ![basic_help](image/basic_help.png)
 
@@ -41,7 +41,7 @@ HoverLib指令分四大模块：基本指南、相框书架指南、物品展示
 ![basic_help](image/item_display_help.png)
 
 参数解释：
-1. \<x\> \<y\> \<z\> 这三个变量表示了一个三维坐标（可以带小数或负号），你可以使用`~`符号来表示绝对定位，也可以使用`~-2`的形式来表示对绝对定位的偏移（偏移量能是整数）
+1. \<x\> \<y\> \<z\> 这三个变量表示了一个三维坐标（可以带小数或负号），你可以使用`~`符号来表示绝对定位，也可以使用`~-2`的形式来表示对绝对定位的偏移（偏移量只能是整数）
 2. \<rx\> \<ry\> \<rz\> 这三个变量表示了该实体在三轴方向上的旋转角度（即：rotate x，rotate y，rotate z）这些变量的值必须是\(-∞,+∞\)的任意一个整数
 3. \<scale\> 物品的缩放比例，该值必须是一个\[0.5, 1\]区间内的任意一个小数
 4. \[\<type\>\] 是物品展示实体的模式（见：[Minecraft Wiki](https://minecraft.fandom.com/zh/wiki/%E5%B1%95%E7%A4%BA%E5%AE%9E%E4%BD%93)）用于再次变换物品模型，固定的选项为`none`（不变换）、`thirdperson_lefthand`（第三人称视角左手变换）、`thirdperson_righthand`（第三人称视角右手变换）、`firstperson_lefthand`（第一人称视角左手变换）、`firstperson_righthand`（第一人称视角右手变换）、`head`（放置在头部物品栏的变换）、`gui`（在图形界面中的变换）、`ground`（平铺在地面的变换）和`fixed`（默认变换）。默认为`fixed`。
