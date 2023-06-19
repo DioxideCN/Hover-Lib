@@ -21,13 +21,27 @@ public class MainCommand implements TabExecutor {
             return false;
         }
         // display help
-        if (args.length == 1 && "help".equals(args[0])) {
-            return this.pluginHelper((Player) sender);
+        if (args.length == 0) {
+            return this.pluginHelper(player);
         }
 
         BookCommand bookCommand = new BookCommand();
         ItemCommand itemCommand = new ItemCommand();
         BlockCommand blockCommand = new BlockCommand();
+        if (args.length == 1) {
+            if ("help".equals(args[0])) {
+                return this.pluginHelper(player);
+            }
+            if ("block".equals(args[0])) {
+                return blockCommand.pluginHelper(player);
+            }
+            if ("item".equals(args[0])) {
+                itemCommand.pluginHelper(player);
+            }
+            if ("book".equals(args[0])) {
+                return bookCommand.pluginHelper(player);
+            }
+        }
         // display <module> <action>
         if (args.length == 2) {
             if ("book".equals(args[0])) {

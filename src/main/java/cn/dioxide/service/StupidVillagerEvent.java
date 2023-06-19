@@ -12,7 +12,7 @@ import org.bukkit.event.entity.VillagerReplenishTradeEvent;
  * @date 2023/6/8
  * @since 1.0
  */
-public class VillagerEvent implements Listener {
+public class StupidVillagerEvent implements Listener {
 
     @EventHandler
     public void onVillagerReplenishTrade(VillagerReplenishTradeEvent event) {

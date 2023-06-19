@@ -2,7 +2,6 @@ package cn.dioxide;
 
 import cn.dioxide.command.MainCommand;
 import cn.dioxide.extension.Config;
-import cn.dioxide.extension.CustomRecipe;
 import cn.dioxide.service.*;
 import cn.dioxide.util.ColorUtil;
 import lombok.Getter;
@@ -23,7 +22,6 @@ public final class HoverLib extends JavaPlugin {
         Config.init();
         registerCommand();
         registerEvent();
-        registerRecipes();
         registerScheduler();
     }
 
@@ -41,16 +39,16 @@ public final class HoverLib extends JavaPlugin {
     // 注册事件
     private void registerEvent() {
         if (Config.get().feature.isProtectTerrain()) {
-            BreakEvent breakEvent = new BreakEvent();
-            Bukkit.getPluginManager().registerEvents(breakEvent, this);
+            ProtectTerrainEvent protectTerrainEvent = new ProtectTerrainEvent();
+            Bukkit.getPluginManager().registerEvents(protectTerrainEvent, this);
         }
         if (Config.get().feature.isTrimUpgrade()) {
             EquipEvent equipEvent = new EquipEvent();
             Bukkit.getPluginManager().registerEvents(equipEvent, this);
         }
         if (Config.get().feature.isStupidVillager()) {
-            VillagerEvent villagerEvent = new VillagerEvent();
-            Bukkit.getPluginManager().registerEvents(villagerEvent, this);
+            StupidVillagerEvent stupidVillagerEvent = new StupidVillagerEvent();
+            Bukkit.getPluginManager().registerEvents(stupidVillagerEvent, this);
         }
         if (Config.get().feature.isIronGolem()) {
             GolemEvent golemEvent = new GolemEvent();
@@ -73,13 +71,6 @@ public final class HoverLib extends JavaPlugin {
     private void registerScheduler() {
         if (Config.get().feature.isTrimUpgrade()) {
             getServer().getScheduler().runTaskTimer(this, LoopTaskEvent::spreadWaterBreath, 0L, 20L);
-        }
-    }
-
-    // 注册合成表
-    private void registerRecipes() {
-        if (Config.get().feature.isPainting()) {
-            new CustomRecipe().init(this);
         }
     }
 

@@ -62,7 +62,6 @@ public class Config {
         this.version = configs[0].getInt("version", 1);
 
         this.feature = new Feature();
-        this.feature.painting = configs[0].getBoolean("feature.painting", true);
         this.feature.protectTerrain = configs[0].getBoolean("feature.protect-terrain", true);
         this.feature.craftingTable = configs[0].getBoolean("feature.crafting-table", true);
         this.feature.ironGolem = configs[0].getBoolean("feature.iron-golem", true);
@@ -83,7 +82,6 @@ public class Config {
 
     @Getter
     public static class Feature {
-        private boolean painting;
         private boolean protectTerrain;
         private boolean craftingTable;
         private boolean ironGolem;

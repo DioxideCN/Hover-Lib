@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
  * @date 2023/6/8
  * @since 1.0
  */
-public class BreakEvent implements Listener {
+public class ProtectTerrainEvent implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {

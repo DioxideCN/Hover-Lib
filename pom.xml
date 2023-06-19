@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.dioxide</groupId>
-    <artifactId>hoverlib</artifactId>
+    <artifactId>HoverLib</artifactId>
     <version>1.1</version>
     <packaging>jar</packaging>
 
@@ -81,11 +81,6 @@
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.11.3</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

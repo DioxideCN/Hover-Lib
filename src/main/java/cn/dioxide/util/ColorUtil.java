@@ -6,7 +6,7 @@ public class ColorUtil {
     }
 
     public static String formatNotice(String msg) {
-        return format("&b[&aHover&eLib&b] " + msg);
+        return format("&b&l[&a&lHover&e&lLib&b&l]&r " + msg);
     }
 
     public static String formatCommand(String msg) {

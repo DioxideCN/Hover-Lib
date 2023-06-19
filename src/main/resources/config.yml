@@ -4,8 +4,6 @@ version: 1
 feature:
   # 是否防止苦力怕爆炸、恶魂火球爆炸破坏地形
   protect-terrain: true
-  # 是否启用风火水土元素挂画的合成
-  painting: true
   # 是否启用工作台破坏后只掉落1-3个木板
   crafting-table: true
   # 是否下调铁傀儡的掉落物为0-3个铁粒
