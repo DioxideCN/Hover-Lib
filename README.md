@@ -85,7 +85,7 @@ HoverLib指令分四大模块：基本指南、相框书架指南、物品展示
 ![basic_help](image/block_display_example.png)
 
 ## 构建下载地址
-本插件是开源免费的，在二次开发过程中需要遵守MIT开源协议。本插件所用所有代码均为原创,不存在借用/抄袭/违反协议等行为。
+本插件是开源免费的，在二次开发过程中需要遵守Apache License开源协议。本插件所用所有代码均为原创,不存在借用/抄袭/违反协议等行为。
 
 Github：[Hover-Lib: a minecraft server plugin that allow you to open a written book from item frame](https://github.com/Mordor171/Hover-Lib)
 
