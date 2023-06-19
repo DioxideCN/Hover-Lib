@@ -6,7 +6,7 @@
 
     <groupId>cn.dioxide</groupId>
     <artifactId>hoverlib</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
 
     <name>HoverLib</name>
@@ -83,14 +83,10 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>2.0.21</version>
-        </dependency>
-        <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api-plugin</artifactId>
             <version>2.11.3</version>
         </dependency>
     </dependencies>
+
 </project>

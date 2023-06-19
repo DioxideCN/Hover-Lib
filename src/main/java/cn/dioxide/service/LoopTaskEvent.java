@@ -34,13 +34,14 @@ public class LoopTaskEvent {
     }
 
     private static boolean isTideArmorTrim(ItemStack item) {
-        if (item == null) {
+        if (item == null || item.getItemMeta() == null) {
             return false;
         }
-        ArmorMeta itemMeta = (ArmorMeta) item.getItemMeta();
-        return itemMeta != null &&
-                itemMeta.getTrim() != null &&
-                itemMeta.getTrim().getPattern() == TrimPattern.TIDE;
+        if (item.getItemMeta() instanceof ArmorMeta itemMeta) {
+            return itemMeta.getTrim() != null &&
+                   itemMeta.getTrim().getPattern() == TrimPattern.TIDE;
+        }
+        return false;
     }
 
 }

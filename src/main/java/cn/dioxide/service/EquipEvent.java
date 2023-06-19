@@ -1,10 +1,13 @@
 package cn.dioxide.service;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
@@ -28,25 +31,36 @@ public class EquipEvent implements Listener {
         if (!hasSpireTrim(player)) {
             return;
         }
-        // 使用玩家的面朝方向作为力的方向，你可以根据需要调整这个向量
-        Vector velocity = player.getLocation().getDirection().normalize().multiply(5);
-        // 将Y轴的速度设置为1
-        velocity.setY(1);
-        player.setVelocity(velocity);
+        // Check if the damage is caused by an entity
+        if (event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
+            Entity damager = damageByEntityEvent.getDamager();
+            // Check if the damager is a hostile mob
+            if (damager instanceof Monster) {
+                // Use the player's facing direction as the force direction, you can adjust this vector as needed
+                Vector velocity = player.getLocation().getDirection().normalize().multiply(5);
+                // Set the y velocity to 1
+                velocity.setY(1);
+                player.setVelocity(velocity);
+            }
+        }
     }
 
     private boolean hasSpireTrim(Player player) {
         ItemStack[] armor = player.getInventory().getArmorContents();
         for (ItemStack item : armor) {
-            if (item == null || !item.getType().name().contains("NETHERITE")) {
+            if (item == null || !item.getType().name().contains("NETHERITE") || item.getItemMeta() == null) {
                 return false;
             }
-            // 全套高塔盔甲纹饰下界合金装备
-            ArmorMeta itemMeta = (ArmorMeta) item.getItemMeta();
-            if (itemMeta == null ||
-                    itemMeta.getTrim() == null ||
-                    itemMeta.getTrim().getPattern() != TrimPattern.SPIRE) {
-                System.out.println("false");
+            if (item.getItemMeta() instanceof ArmorMeta itemMeta) {
+                // 全套高塔盔甲纹饰下界合金装备
+                itemMeta = (ArmorMeta) item.getItemMeta();
+                if (itemMeta == null ||
+                        itemMeta.getTrim() == null ||
+                        itemMeta.getTrim().getPattern() != TrimPattern.SPIRE) {
+                    System.out.println("false");
+                    return false;
+                }
+            } else {
                 return false;
             }
         }
@@ -80,11 +94,16 @@ public class EquipEvent implements Listener {
                 // 镶金下界合金装备、镶金钻石装备
                 if (materialName.contains("NETHERITE") ||
                         materialName.contains("DIAMOND")) {
-                    ArmorMeta itemMeta = (ArmorMeta) item.getItemMeta();
-                    if (itemMeta != null &&
-                            itemMeta.getTrim() != null &&
-                            itemMeta.getTrim().getMaterial() == TrimMaterial.GOLD) {
-                        return true;
+                    if (item.getItemMeta() == null) {
+                        return false;
+                    }
+                    if (item.getItemMeta() instanceof ArmorMeta itemMeta) {
+                        itemMeta = (ArmorMeta) item.getItemMeta();
+                        if (itemMeta != null &&
+                                itemMeta.getTrim() != null &&
+                                itemMeta.getTrim().getMaterial() == TrimMaterial.GOLD) {
+                            return true;
+                        }
                     }
                 }
             }

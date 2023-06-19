@@ -1,56 +1,54 @@
 package cn.dioxide.service;
 
 import cn.dioxide.util.ColorUtil;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.Objects;
 
-public class ClickBlockEvent implements Listener {
+public class BookPlaceEvent implements Listener {
 
     @EventHandler
     public synchronized void playerPutBook2Wall(PlayerInteractEvent e) {
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
-            return;
-
-        ItemStack awaitBook = e.getPlayer().getInventory().getItemInMainHand().clone(); // 成书
-        if (
-                !awaitBook.getType().equals(Material.WRITTEN_BOOK) ||
-                awaitBook.getItemMeta() == null ||
-                awaitBook.getItemMeta().getLore() == null ||
-                awaitBook.getItemMeta().getLore().size() < 1
-        )
-            return;
-
-        if (!awaitBook.getItemMeta().getLore().get(awaitBook.getItemMeta().getLore().size() - 1).contains("右键方块可以在指定位置可以放置该书本的展示框"))
-            return;
-
-        if (e.getClickedBlock() == null)
-            return;
-        if (Objects.equals(e.getClickedBlock().getType(), Material.AIR))
-            return;
-
-        if (e.getPlayer().hasPermission("hoverlib.place")) {
-            e.getPlayer().sendMessage(ColorUtil.format("&c[HoverLib] 你没有放置该书本的权限"));
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-
+        ItemStack awaitBook = e.getPlayer().getInventory().getItemInMainHand(); // 成书
+        if (!awaitBook.getType().equals(Material.WRITTEN_BOOK) ||
+            awaitBook.getItemMeta() == null ||
+            awaitBook.getItemMeta().getLore() == null ||
+            awaitBook.getItemMeta().getLore().size() < 1) {
+            return;
+        }
+        if (!awaitBook
+                .getItemMeta()
+                .getLore()
+                .get(awaitBook.getItemMeta().getLore().size() - 1)
+                .contains("右键方块放置激活的成书")) {
+            return;
+        }
+        if (e.getClickedBlock() == null) {
+            return;
+        }
+        if (Objects.equals(e.getClickedBlock().getType(), Material.AIR)) {
+            return;
+        }
+        if (!e.getPlayer().hasPermission("hover.display.book.place")) {
+            e.getPlayer().sendMessage(ColorUtil.formatNotice("&c你没有放置该成书的权限"));
+            return;
+        }
         Block clickedBlock = e.getClickedBlock();      // 方块类型
         BlockFace clickedBlockFace = e.getBlockFace(); // 方块朝向
 
@@ -59,6 +57,7 @@ public class ClickBlockEvent implements Listener {
         int itemFramePositionY = clickedBlock.getY();
         int itemFramePositionZ = clickedBlock.getZ();
         BlockFace itemFrameFacing = BlockFace.UP;
+        // 确定物品展示框的朝向
         switch (clickedBlockFace) {
             case UP -> itemFramePositionY++;
             case DOWN -> {
@@ -90,33 +89,36 @@ public class ClickBlockEvent implements Listener {
         awaitBookMeta.getLore().remove(awaitBookMeta.getLore().size() - 1);
         awaitBook.setItemMeta(awaitBookMeta);
 
-        e.getPlayer().sendMessage(clickedBlockFace.toString());
         Location location = new Location(clickedBlock.getWorld(), itemFramePositionX, itemFramePositionY, itemFramePositionZ);
         ItemFrame itemFrame = (ItemFrame) clickedBlock.getWorld().spawnEntity(location, EntityType.ITEM_FRAME);
         itemFrame.setFixed(true);
-        itemFrame.setItem(awaitBook);
+        ItemStack awaitBook_temp = awaitBook.clone();
+        awaitBook_temp.setAmount(1);
+        itemFrame.setItem(awaitBook_temp);
         itemFrame.setFacingDirection(itemFrameFacing);
+        // 添加 owner.player_name 的tag方便后续owner移除
+        itemFrame.addScoreboardTag("owner." + e.getPlayer().getName());
+        if (!e.getPlayer().isOp()) {
+            // 非OP需要扣除
+            awaitBook.setAmount(awaitBook.getAmount() - 1);
+        }
     }
 
     @EventHandler
-    public void onPlayerInteract(SignChangeEvent event) {
-        Player player = event.getPlayer();
-        ItemStack itemInHand = player.getInventory().getItemInMainHand();
-
-        // 检查玩家手持的是否是纸
-        if(event.getBlock().getState() instanceof Sign sign) {
-            if (itemInHand.getType() == Material.PAPER) {
-                // 取消编辑事件
-                event.setCancelled(true);
-                SignSide side = (sign).getSide(event.getSide());
-                // 移除告示牌的标签
-                side.setGlowingText(false);
-                side.setColor(DyeColor.BLACK);
-                // 从玩家的物品栏中移除一张纸
-                itemInHand.setAmount(itemInHand.getAmount() - 1);
-                sign.update();
-                // 播放声音
-                player.playSound(player, Sound.BLOCK_CALCITE_HIT, 1.0F, 1.0F);
+    public void playerRemoveBookFromWall(HangingBreakByEntityEvent e) {
+        if (e.getEntity() instanceof ItemFrame itemFrame &&
+                e.getRemover() instanceof Player player) {
+            // 是否被固定并且tag包含 owner.player_name
+            if ((itemFrame.isFixed() &&
+                    itemFrame.getScoreboardTags().contains("owner." + player.getName())) ||
+                    player.isOp()) {
+                // 掉落展示框中的书本
+                ItemStack item = itemFrame.getItem();
+                itemFrame.getWorld().dropItemNaturally(itemFrame.getLocation(), item);
+                itemFrame.remove();
+            } else {
+                player.sendMessage(ColorUtil.formatNotice("&c该成书展示架不属于你"));
+                e.setCancelled(true);
             }
         }
     }

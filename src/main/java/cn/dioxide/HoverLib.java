@@ -17,20 +17,20 @@ public final class HoverLib extends JavaPlugin {
         // Plugin startup logic
         send("&a[HoverLib] has enabled");
 
-        Objects.requireNonNull(Bukkit.getPluginCommand("hlib")).setExecutor(new MainCommand());
-        Objects.requireNonNull(Bukkit.getPluginCommand("hlib")).setTabCompleter(new MainCommand());
+        Objects.requireNonNull(Bukkit.getPluginCommand("display")).setExecutor(new MainCommand());
+        Objects.requireNonNull(Bukkit.getPluginCommand("display")).setTabCompleter(new MainCommand());
 
         // 事件
-        ClickBlockEvent clickBlockEvent = new ClickBlockEvent();
+        BookPlaceEvent bookPlaceEvent = new BookPlaceEvent();
         ClickItemFrameEvent clickItemFrameEvent = new ClickItemFrameEvent();
-        SmeltingEvent smeltingEvent = new SmeltingEvent();
         BreakEvent breakEvent = new BreakEvent();
         EquipEvent equipEvent = new EquipEvent();
+        VillagerEvent villagerEvent = new VillagerEvent();
 
         // 注册事件
-        Bukkit.getPluginManager().registerEvents(clickBlockEvent, this);
+        Bukkit.getPluginManager().registerEvents(bookPlaceEvent, this);
         Bukkit.getPluginManager().registerEvents(clickItemFrameEvent, this);
-        Bukkit.getPluginManager().registerEvents(smeltingEvent, this);
+        Bukkit.getPluginManager().registerEvents(villagerEvent, this);
         Bukkit.getPluginManager().registerEvents(breakEvent, this);
         Bukkit.getPluginManager().registerEvents(equipEvent, this);
 
@@ -39,6 +39,9 @@ public final class HoverLib extends JavaPlugin {
 
         // 合成配方
         new CustomRecipe().init(this);
+
+        // 插件暴露
+        executor = this;
     }
 
     @Override

@@ -7,6 +7,6 @@ authors: [ Dioxide_CN ]
 description: Let you create a personal library.
 depend: [NBTAPI]
 commands:
-  hlib:
-    description: "wrong usage of HoverLib"
-    usage: "please input /hlib help to get plugin help"
+  display:
+    description: "wrong usage of HoverLib display module"
+    usage: "please input /display help to get plugin help"

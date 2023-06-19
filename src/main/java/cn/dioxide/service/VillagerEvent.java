@@ -8,6 +8,9 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.VillagerReplenishTradeEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Random;
 
 /**
  * @author Dioxide.CN
@@ -36,10 +39,6 @@ public class VillagerEvent implements Listener {
             // 如果进入传送门的实体是村民，则取消事件
             event.setCancelled(true);
         }
-//        if (event.getEntity().getType() == EntityType.PLAYER) {
-//            event.getEntity().sendMessage(ColorUtil.format("&c[&e重要提示&c] &7下届仍在更新，现在无法进入，请各位玩家谅解。"));
-//        }
-//        event.setCancelled(true);
     }
 
     @EventHandler
@@ -47,6 +46,11 @@ public class VillagerEvent implements Listener {
         if (event.getEntityType() == EntityType.IRON_GOLEM) {
             // 如果死亡的实体是铁傀儡，则清除掉落的铁锭
             event.getDrops().removeIf(item -> item.getType() == Material.IRON_INGOT);
+            // Create a Random object
+            Random rand = new Random();
+            // Get a random number from 0 to 3
+            int nuggetsToDrop = rand.nextInt(4);
+            event.getDrops().add(new ItemStack(Material.IRON_NUGGET, nuggetsToDrop));
         }
     }
 
