@@ -102,5 +102,5 @@ HoverLib指令分四大模块：基本指南、相框书架指南、物品展示
 Github：[Hover-Lib: a minecraft server plugin that allow you to open a written book from item frame](https://github.com/Mordor171/Hover-Lib)
 
 ## 更新记录
-2023-06-20 新增命令参数，支持展示实体在xyz三轴方向上进行缩放
-2023-06-19 初次发布插件，版本从1.1开始迭代
+2023-06-20 v1.1.1 新增命令参数，支持展示实体在xyz三轴方向上进行缩放
+2023-06-19 v1.1 初次发布插件，版本从1.1开始迭代
