@@ -10,5 +10,5 @@ commands:
   display:
     description: "Get display help"
     permission-message: "You don't have permission to use this command."
-    permission: "display.use"
+    permission: "hover.display.use"
     usage: "/display <module>"

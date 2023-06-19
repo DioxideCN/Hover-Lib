@@ -91,7 +91,7 @@ public class MainCommand implements TabExecutor {
                 return blockCommand.placeItemDisplay(
                         player,
                         args,
-                        args.length != 9 || Boolean.parseBoolean(args[8]));
+                        args.length != 9 && Boolean.parseBoolean(args[8]));
             }
         }
         return false;
